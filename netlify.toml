@@ -1,0 +1,12 @@
+[build]
+  # The Notion workspace has been frozen at #146 since it hit its free block
+  # limit, so data/companies.json and data/content.json in this repo are the
+  # source of truth. The sync steps are deliberately NOT in this command: left
+  # in, they overwrite both files at build time and silently revert committed
+  # copy, which is what happened on 11 Nov 2026.
+  #
+  # To put Notion back in charge once the workspace is unfrozen, restore:
+  #   command = "npm install && node scripts/seed-notion.js && node scripts/backfill-founded.js && node scripts/sync-notion.js && node scripts/sync-content.js"
+  # and make sure every row there is current first.
+  command = "npm install"
+  publish = "."
