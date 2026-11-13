@@ -219,17 +219,21 @@ function applyContent(){
 }
 
 async function init(){
-  try{
-    const c = await fetch('data/content.json', {cache:'no-store'});
-    if (c.ok) CONTENT = await c.json();
-  }catch(e){ /* content is optional; page keeps its built-in copy */ }
+  // all three data files are requested together (and preloaded from index.html),
+  // and revalidated against the server so repeat visits reuse the cached copy
+  const get = u => fetch(u).then(r => r.ok ? r.json() : Promise.reject(new Error(u + ' ' + r.status)));
+  const pContent = get('data/content.json').catch(() => null);
+  const pData = get('data/companies.json');
+  const pEd = get('data/editions.json').catch(() => null);
+  pData.catch(() => {});
+  const c = await pContent;
+  if (c) CONTENT = c;   // content is optional; page keeps its built-in copy
   applyContent();
   try{
-    const res = await fetch('data/companies.json', {cache:'no-store'});
-    DATA = await res.json();
-    const edr = await fetch('data/editions.json', {cache:'no-store'});
-    if (edr.ok) EDITIONS = await edr.json();
-boot();
+    DATA = await pData;
+    const ed = await pEd;
+    if (ed) EDITIONS = ed;
+    boot();
   }catch(err){
     document.getElementById('count').textContent = '// could not load data/companies.json — check the file for a JSON syntax error (jsonlint.com)';
     console.error(err);

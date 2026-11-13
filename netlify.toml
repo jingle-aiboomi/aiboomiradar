@@ -8,5 +8,6 @@
   # To put Notion back in charge once the workspace is unfrozen, restore:
   #   command = "npm install && node scripts/seed-notion.js && node scripts/backfill-founded.js && node scripts/sync-notion.js && node scripts/sync-content.js"
   # and make sure every row there is current first.
-  command = "npm install"
+  # bake.js writes the current counts into index.html (reads committed data only)
+  command = "npm install && node scripts/bake.js"
   publish = "."
