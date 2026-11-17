@@ -366,7 +366,8 @@ function editionHeadline(e, cos){
 }
 function editionStandfirst(e, cos){
   if (e.hook) return e.hook;
-  const secs = [...new Set(cos.map(c => shortSector(c.sector)))];
+  // a company's own short label ("Cybersecurity") reads better than its broad sector
+  const secs = [...new Set(cos.map(c => c.area ? c.area.toLowerCase() : shortSector(c.sector)))];
   const years = cos.map(c => c.founded).filter(Boolean);
   let line = secs.length > 1
     ? listOf(secs).replace(/^./, m => m.toUpperCase()) + '.'
@@ -413,7 +414,7 @@ function renderWeekly(){
     .map(x => `<button class="wk-co" data-jump="${x.n}">
         <span class="wk-pos">${pad2(x.edition_pos)} / ${pad2(e.companies.length)}</span>
         <span class="wk-name2">${esc(x.name)}</span>
-        <span class="wk-sector">${esc(x.sector)}</span>
+        <span class="wk-sector">${esc(x.area || x.sector)}</span>
         <span class="wk-line">${esc(firstLine(x.snippet))}</span>
       </button>`).join('');
 }
